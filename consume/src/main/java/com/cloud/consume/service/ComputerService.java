@@ -14,7 +14,8 @@ public class ComputerService {
 
     @HystrixCommand(fallbackMethod = "addFallback")
     public String add(){
-        return restTemplate.getForEntity("http://computer-service/add?a=10&b=20", String.class).getBody();
+        //return restTemplate.getForEntity("http://native-springcloud-produce-svc.ns-native-springcloud.svc.cluster.local/add?a=10&b=20", String.class).getBody();
+        return restTemplate.getForEntity("http://COMPUTER-SERVICE/add?a=10&b=20", String.class).getBody();
         //return "liwei";
     }
 

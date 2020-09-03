@@ -1,0 +1,67 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: native-springcloud-configserver-svc
+  namespace: ns-native-springcloud
+  labels:
+    svc: lb-native-springcloud-configserver
+spec:
+  type: NodePort
+  ports:
+    - port: 8015
+      targetPort: 7001
+      nodePort: 31091
+  selector:
+    container: lb-native-springcloud-configserver
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: native-springcloud-configserver-app
+  labels:
+    app: lb-native-springcloud-configserver
+  namespace: ns-native-springcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      container: lb-native-springcloud-configserver
+  template:
+    metadata:
+      labels:
+        container: lb-native-springcloud-configserver
+    spec:
+      #terminationGracePeriodSeconds: 60
+      serviceAccountName: native-springcloud-serviceaccount
+      containers:
+        - name: native-springcloud-configserver-container
+          # Any image is permissible as long as:
+          # 1. It serves a 404 page at /
+          # 2. It serves 200 on a /healthz endpoint
+          image: 10.0.2.7:5000/native-springcloud-configserver:latest
+          imagePullPolicy: Always
+          env:
+          - name: eureka_host
+            value: "native-springcloud-eruake-svc.ns-native-springcloud.svc.cluster.local"
+          - name: eureka_port
+            value: "8015"
+          #livenessProbe:
+          #  httpGet:
+          #    path: /health
+          #    port: 8099
+          #    scheme: HTTP
+          #  initialDelaySeconds: 30
+          #  timeoutSeconds: 5
+          ports:
+            - containerPort: 7001
+          #resources:
+          #  limits:
+          #    cpu: 10m
+          #    memory: 20Mi
+          #  requests:
+          #    cpu: 10m
+          #    memory: 20Mi
+

@@ -1,0 +1,77 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: native-springcloud-consume-svc
+  namespace: ns-native-springcloud
+  labels:
+    svc: lb-native-springcloud-consume
+spec:
+  type: NodePort
+  ports:
+    - port: 8015
+      targetPort: 3334
+      nodePort: 31094
+  selector:
+    container: lb-native-springcloud-consume
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: native-springcloud-consume-app
+  labels:
+    app: lb-native-springcloud-consume
+  namespace: ns-native-springcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      container: lb-native-springcloud-consume
+  template:
+    metadata:
+      labels:
+        container: lb-native-springcloud-consume
+    spec:
+      #terminationGracePeriodSeconds: 60
+      serviceAccountName: native-springcloud-serviceaccount
+      containers:
+        - name: native-springcloud-consume-container
+          # Any image is permissible as long as:
+          # 1. It serves a 404 page at /
+          # 2. It serves 200 on a /healthz endpoint
+          image: 10.0.2.7:5000/native-springcloud-consume:latest
+          imagePullPolicy: Always
+          env:
+          - name: eureka_host
+            value: "native-springcloud-eruake-svc.ns-native-springcloud.svc.cluster.local"
+          - name: eureka_port
+            value: "8015"
+          - name: produce_host
+            value: "COMPUTER-SERVICE"
+          - name: MY_POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          #- name: MY_POD_PORT
+          #  valueFrom:
+          #    fieldRef:
+          #      fieldPath: status.podPort
+          #livenessProbe:
+          #  httpGet:
+          #    path: /health
+          #    port: 8099
+          #    scheme: HTTP
+          #  initialDelaySeconds: 30
+          #  timeoutSeconds: 5
+          ports:
+            - containerPort: 3334
+          #resources:
+          #  limits:
+          #    cpu: 10m
+          #    memory: 20Mi
+          #  requests:
+          #    cpu: 10m
+          #    memory: 20Mi
+
