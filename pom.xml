@@ -2,18 +2,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.hust</groupId>
+    <groupId>com.cloud</groupId>
     <artifactId>lw</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
     <name>lw</name>
     <description>Demo project for Spring cloud</description>
     <modules>
         <module>eruakeserver</module>
         <module>produce</module>
         <module>consume</module>
-        <module>feignconsume</module>
+        <module>configserver</module>
+		<module>apigateway</module>
+		<module>ms-order</module>
     </modules>
-
+	<build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencyManagement>
         <dependencies>
@@ -30,17 +40,28 @@
             </dependency>
 
             <dependency>
-                <groupId>com.hust.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>produce</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
 
             <dependency>
-                <groupId>com.hust.cloud</groupId>
-                <artifactId>feignconsume</artifactId>
+                <groupId>com.cloud</groupId>
+                <artifactId>configserver</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
-
+			
+            <dependency>
+                <groupId>com.cloud</groupId>
+                <artifactId>apigateway</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+			
+			<dependency>
+                <groupId>com.cloud</groupId>
+                <artifactId>ms-order</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
